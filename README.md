@@ -1,32 +1,95 @@
-# 灵感库 + 工作流跟踪 Skill
+# 知识秘书 Agent — Knowledge Secretary Agent
 
-> 自动捕获对话中的灵感/论文/链接，分类存储，超过阈值自动压缩，并随时输出记忆系统或总结。同时跟踪工作流状态（做了什么、进度、困难、AI 推荐下一步）。
+> **让好想法不再消失，让任务不再卡壳。**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![GitHub: Yanyeoo/inspiration-workflow-skill](https://img.shields.io/badge/GitHub-Yanyeoo-green?logo=github)](https://github.com/Yanyeoo/inspiration-workflow-skill)
+[![Python](https://img.shields.io/badge/python-3.8+-yellow.svg)]()
+[![Platform](https://img.shields.io/badge/platform-Box%20%7C%20Claude%20%7C%20CodeBuddy%20%7C%20Codex-green.svg)]()
+[![Zero Deps](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)]()
+[![BOX AI 创想大赛](https://img.shields.io/badge/BOX%20AI-创想大赛-orange.svg)]()
 
 ---
 
-## ✨ 核心功能
+<!-- DEMO GIF 占位：录屏后替换此行
+![演示 GIF](docs/demo.gif)
+-->
 
-### 🧠 灵感库（知识存储）
-- **自动捕获**：AI 在对话中主动识别灵感/论文/链接
-- **分类存储**：自动分类（`paper` / `url` / `idea` / `decision` / `blocker` / `milestone`）
-- **自动打标签**：AI 自动提取关键词 + 用户确认
-- **自动关联**：存储时自动检索库中相关灵感并询问是否关联
-- **阈值压缩**：灵感数 ≥ 阈值（默认 50 条）自动生成综述文档
+## 🎯 核心理念
 
-### 📊 工作流状态跟踪（思路保持）
-- **记录做了什么**：用户说「我做了…」→ 记录 `action`
-- **跟踪进度**：0–100% 进度管理
-- **记录困难**：用户说「卡住了」→ 记录 `blocker` + AI 推荐 `next_steps`
-- **推荐下一步**：AI 基于当前状态推荐下一步行动
+**你正在做 N 件事，每件事都有自己的知识库（秘书）。AI 用这些知识帮你判断下一步。**
 
-### 📤 导出功能
-- **Markdown**：适配 KM / 腾讯学堂发文模板
-- **JSON**：程序化处理
-- **Mermaid**：可视化灵感关联图谱
-- **工作流报告**：包含「做了什么 / 进度 / 困难 / 下一步」
+| 传统笔记工具 | 知识秘书 Agent |
+|---|---|
+| 记灵感 → 孤立笔记 | 记灵感 → **绑定到当前任务** |
+| 手动打开 → 点击记录 | 对话中识别 → **直接存，零摩擦** |
+| AI 推荐 → 通用建议 | AI 推荐 → **引用你的知识库** |
+| 单一工具锁定 | **Box / Claude / CodeBuddy 共享数据** |
+
+---
+
+## ✨ 四大技术亮点
+
+### 1️⃣ 知识-任务二维绑定（Task-Anchored Knowledge）
+每条知识携带 `task_id`，按任务维度组织，告别孤立笔记碎片。
+
+### 2️⃣ 知识库驱动决策（Personal RAG）
+遇到 blocker 或问「下一步」时，AI 主动检索当前任务知识库，引用具体条目给出有依据的建议。
+
+### 3️⃣ 零摩擦捕获
+识别即存储，全程无「要记录吗」确认弹窗。唯一需要确认的是压缩（不可逆操作）。
+
+### 4️⃣ 全生命周期闭环 + 跨平台共享
+想法捕获 → 任务绑定 → 进度追踪 → 阈值压缩 → 报告导出 → 定时回顾，共享同一份本地数据，换平台不丢上下文。
+
+---
+
+## 🚀 一行安装（Box / WorkBuddy）
+
+```
+use_skill("https://github.com/Yanyeoo/inspiration-workflow-skill")
+```
+
+其他平台见 [DEPLOY.md](DEPLOY.md)。
+
+---
+
+## 💬 效果演示
+
+### 场景：遇到 Blocker，AI 引用知识库推荐（核心亮点）
+
+```
+用户：卡住了，密集检索模型在领域数据上效果很差
+
+AI：✅ 已记录困难：密集检索模型领域适应差
+
+   根据知识库「稀疏+密集混合检索方案」（06-09），推荐：
+   1. 优先用 BM25 保底召回，密集检索做 rerank
+   2. 领域微调：用 triplet loss 对 bi-encoder 做 few-shot
+   3. 参考知识库中的论文 arxiv:2210.11610 章节 4.2
+
+   当前进度 30% → 解决后说「更新到 X%」
+```
+
+### 场景：零摩擦捕获（无需说「记一下」）
+
+```
+用户：我想到可以用图数据库替代 JSON 存储知识关联
+
+AI：✅ 已记录到 [RAG 知识库优化]：
+   图数据库替代 JSON（idea）
+   标签：#图数据库 #知识关联 #架构
+   与「知识关联设计」（06-08）相关，已自动关联。
+```
+
+### 场景：自动识别论文链接
+
+```
+用户：这篇论文很相关 https://arxiv.org/abs/2210.11610
+
+AI：✅ 已记录到 [RAG 知识库优化]：
+   arxiv:2210.11610（paper）
+   标签：#RAG #检索优化 #论文
+```
 
 ---
 
@@ -34,240 +97,154 @@
 
 ```
 inspiration-workflow-skill/
-├── SKILL.md              # WorkBuddy Skill 定义文件（AI 行为规则）
-├── CLAUDE.md            # Claude Code CLI 兼容版本（无 frontmatter）
-├── scripts/
-│   ├── capture.py        # 灵感捕获模块
-│   ├── compress.py       # 自动压缩模块
-│   ├── search.py         # 检索模块
-│   ├── export.py         # 导出模块
-│   └── workflow.py       # 工作流状态跟踪模块
-└── README.md            # 本文件
+├── SKILL.md              # Box/WorkBuddy Skill 定义（v2.0）
+├── CLAUDE.md             # Claude Code CLI 版本
+├── CONTEST.md            # BOX AI 创想大赛参赛说明
+├── DEPLOY.md             # 多平台部署指南（Box/Claude/CodeBuddy/Codex/小龙虾）
+├── DEMO_SCRIPT.md        # 录屏演示脚本（分场景时间轴）
+├── setup.sh              # 一键初始化脚本
+├── agent/                # Agent 多文件架构（Box agent-creator 标准）
+│   ├── IDENTITY.md       # 身份定位
+│   ├── SOUL.md           # 行为准则
+│   ├── AGENTS.md         # 子 Agent 配置
+│   ├── TOOLS.md          # 工具清单与决策树
+│   └── memory/
+│       └── MEMORY.md     # 长期记忆模板
+└── scripts/
+    ├── capture.py        # 灵感捕获模块
+    ├── compress.py       # 阈值压缩模块
+    ├── search.py         # 检索模块
+    ├── export.py         # 导出模块（Markdown / JSON / Mermaid）
+    └── tasks.py          # 任务管理模块
 ```
 
 ---
 
-## 🛠️ 安装
+## 🛠️ 安装方式
 
-### 方式一：WorkBuddy（推荐）
+### 方式一：Box / WorkBuddy（推荐，最丝滑）
 
-```bash
-# 克隆仓库
-git clone https://github.com/Yanyeoo/inspiration-workflow-skill.git ~/.workbuddy/skills/inspiration-workflow-skill
-
-# 或手动复制
-cp SKILL.md ~/.workbuddy/skills/inspiration-workflow-skill/SKILL.md
+在 Box 对话框发送：
+```
+use_skill("https://github.com/Yanyeoo/inspiration-workflow-skill")
 ```
 
-安装后重启 WorkBuddy，Skill 自动生效。直接对话即可触发。
-
----
-
-### 方式二：Claude Code CLI
+### 方式二：一键脚本（全平台初始化）
 
 ```bash
-# 克隆仓库
+curl -fsSL https://raw.githubusercontent.com/Yanyeoo/inspiration-workflow-skill/master/setup.sh | bash
+```
+
+### 方式三：Claude Code CLI
+
+```bash
 git clone https://github.com/Yanyeoo/inspiration-workflow-skill.git
-cd inspiration-workflow-skill
-
-# 安装到 Claude Code CLI commands 目录
 mkdir -p ~/.claude/commands
-cp CLAUDE.md ~/.claude/commands/inspiration-workflow.md
+cp inspiration-workflow-skill/CLAUDE.md ~/.claude/commands/inspiration-workflow.md
+# 使用：claude → /inspiration-workflow
 ```
 
-安装后，在 Claude Code CLI 中用 `/inspiration-workflow` 调用。
+### 方式四：手动克隆
 
----
-
-## 🚀 快速开始
-
-### 1️⃣ 捕获灵感
 ```bash
-python scripts/capture.py --content "我想到一个点子，可以用 AI 自动生成单元测试" --type idea --tags "AI,测试,自动化"
+git clone https://github.com/Yanyeoo/inspiration-workflow-skill.git \
+  ~/.workbuddy/skills/inspiration-workflow-skill
 ```
 
-或直接对话（WorkBuddy Skill 自动触发）：
-> 用户：「我想到一个点子，可以用 AI 做代码审查」\
-> AI：「✅ 识别到灵感：AI 代码审查。要记录到灵感库吗？（Y/n）」
+详细的 CodeBuddy / Codex / 小龙虾安装说明见 [DEPLOY.md](DEPLOY.md)。
 
 ---
 
-### 2️⃣ 检索灵感
+## 🚀 快速上手
+
 ```bash
-# 按关键词搜索
-python scripts/search.py --file ~/.workbuddy/memory/inspirations/inspirations.json --keyword "RAG"
+SCRIPT=~/.workbuddy/skills/inspiration-workflow-skill/scripts
 
-# 按标签搜索
-python scripts/search.py --file ~/.workbuddy/memory/inspirations/inspirations.json --tag "AI"
+# 1. 创建任务
+python $SCRIPT/tasks.py --new "RAG 知识库优化"
 
-# 查看所有灵感
-python scripts/search.py --file ~/.workbuddy/memory/inspirations/inspirations.json --all
+# 2. 捕获灵感
+python $SCRIPT/capture.py --content "稀疏+密集混合检索方案" --type idea
+
+# 3. 记录进度
+python $SCRIPT/capture.py --content "完成 BM25 基线" --type milestone
+# 或通过 workflow 脚本（如果存在）
+# python $SCRIPT/workflow.py --action "完成 BM25 基线" --progress 30
+
+# 4. 搜索知识
+python $SCRIPT/search.py \
+  --file ~/.workbuddy/memory/inspirations/inspirations.json \
+  --keyword "RAG"
+
+# 5. 导出报告
+python $SCRIPT/export.py \
+  --file ~/.workbuddy/memory/inspirations/inspirations.json \
+  --format markdown --output ~/Desktop/report.md
+
+# 6. 检查压缩阈值
+python $SCRIPT/compress.py \
+  --file ~/.workbuddy/memory/inspirations/inspirations.json \
+  --dry-run
 ```
 
 ---
 
-### 3️⃣ 工作流状态跟踪
-```bash
-# 记录做了什么
-python scripts/workflow.py --action "完成灵感库 SKILL.md 编写" --progress 30
+## 📊 数据存储方案
 
-# 更新进度
-python scripts/workflow.py --progress 60
-
-# 记录困难
-python scripts/workflow.py --blocker "tai-skill 鉴权脚本有 bug"
-
-# 查看当前状态
-python scripts/workflow.py --status
 ```
+~/.workbuddy/memory/
+├── tasks.json                 # 任务列表（核心，v2.0 新增）
+├── inspirations/
+│   └── inspirations.json     # 知识库（每条绑定 task_id）
+├── reviews/                  # 压缩综述（自动生成）
+│   └── review-{task}-{date}.md
+└── exports/                  # 导出文件
+    └── task-report-{date}.md
+```
+
+**跨平台共享**：所有平台（Box / Claude CLI / CodeBuddy）均读写此目录，切换工具不丢数据。
 
 ---
 
-### 4️⃣ 自动压缩
-```bash
-# 设置压缩阈值（默认 50 条）
-python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json --threshold 30
+## 📋 触发词速查
 
-# 执行压缩（达到阈值后自动触发）
-python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json
-
-# 仅检测不执行
-python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json --dry-run
-```
-
----
-
-### 5️⃣ 导出
-```bash
-# 导出为 Markdown（适配 KM / 腾讯学堂）
-python scripts/export.py --file ~/.workbuddy/memory/inspirations/inspirations.json --format markdown --output exports/inspirations.md
-
-# 导出为 JSON
-python scripts/export.py --file ~/.workbuddy/memory/inspirations/inspirations.json --format json --output exports/inspirations.json
-
-# 导出为 Mermaid 图谱
-python scripts/export.py --file ~/.workbuddy/memory/inspirations/inspirations.json --format mermaid --output exports/graph.md
-
-# 导出工作流报告
-python scripts/export.py --workflow --output exports/workflow-report.md
-```
-
----
-
-## 📋 SKILL.md 触发词（WorkBuddy）
-
-| 场景 | 触发词示例 | AI 动作 |
-|---|---|---|
-| 灵感捕获 | 「我想到…」、「有个想法…」、「记一下…」 | 自动询问是否记录到灵感库 |
-| 链接/论文分享 | 包含 `http(s)://` 或「论文」、「paper」 | 自动提取并询问是否存储 |
-| 工作流更新 | 「我做了…」、「刚才…」、「现在在…」 | 更新工作流状态 |
-| 遇到困难 | 「卡住了」、「不知道怎么办」、「报错」 | 记录困难 + 推荐下一步 |
-| 查询灵感 | 「之前想到的…」、「我记录过…」 | 检索灵感库 |
-| 查看进度 | 「现在进度如何」、「做到哪了」 | 输出工作流状态总结 |
-| 导出总结 | 「导出记忆」、「生成总结」、「写一份报告」 | 导出格式化的记忆/工作流报告 |
-
----
-
-## 📊 存储方案
-
-### 文件结构
-```
-~/.workbuddy/memory/inspirations/
-├── inspirations.json        # 灵感库（主文件）
-├── workflow-state.json      # 工作流状态
-├── reviews/                # 综述文档（自动生成）
-│   └── review-2026-06-09.md
-└── exports/                # 导出文件
-    ├── inspirations-export-2026-06-09.md
-    └── workflow-report-2026-06-09.md
-```
-
-### inspirations.json Schema
-```json
-{
-  "version": "1.0",
-  "entries": [
-    {
-      "id": "insp_20260609_001_123456",
-      "title": "RAG 优化论文",
-      "content": "刚才看到一篇关于 RAG 优化的论文...",
-      "type": "paper",
-      "tags": ["RAG", "知识库", "优化"],
-      "related": ["insp_20260607_001_789012"],
-      "created_at": "2026-06-09T12:30:00+08:00",
-      "status": "active",
-      "source_url": "https://arxiv.org/..."
-    }
-  ],
-  "meta": {
-    "total": 1,
-    "last_compressed": null,
-    "compression_threshold": 50
-  }
-}
-```
+| 说什么 | AI 做什么 |
+|---|---|
+| 「开始做 X」/ 「新任务：X」 | 创建任务，切换为活跃 |
+| 「我想到…」/ 「有个想法…」 | 直接存为 idea，绑定当前任务 |
+| `http://` 或 `https://` 链接 | 直接存为 url/paper |
+| 「我做了…」/ 「完成了…」 | 更新任务进度 + history |
+| 「卡住了」/ 「报错」/ 「不知道怎么」 | 记录 blocker + 知识库推荐 |
+| 「接下来干嘛」/ 「下一步」 | 读知识库，输出有依据推荐 |
+| 「看所有任务」/ 「任务总览」 | 格式化输出所有任务状态 |
+| 「导出总结」/ 「生成报告」 | export.py 生成任务报告 |
 
 ---
 
 ## ⚙️ 配置项
 
-用户可通过对话修改配置：
-
 | 配置项 | 默认值 | 说明 |
 |---|---|---|
-| `compression_threshold` | 50 | 灵感数达到此值触发压缩 |
-| `auto_detect` | true | 是否自动识别灵感 |
-| `confirm_before_save` | true | 存储前是否询问确认 |
-| `reminder_interval` | 10 | 每 N 条灵感提醒一次 |
-| `compression_mode` | "confirm" | 压缩模式：`auto` 自动 / `confirm` 确认后 / `manual` 手动 |
-
-**修改示例**（通过对话）：
-```
-用户：「把压缩阈值改成 30 条」
-AI：「✅ 已修改压缩阈值为 30 条」
-```
+| `compression_threshold` | 50（全局）/ 30（单任务）| 触发压缩的知识条数 |
+| `auto_detect` | true | 自动识别知识（关闭后需手动「记一下」）|
+| `confirm_before_compress` | true | 压缩前询问确认（推荐保持开启）|
+| `reminder_interval` | 10 | 每 N 条知识提醒一次进度 |
 
 ---
 
-## 🧪 测试
+## 🔮 未来规划
 
-### 1️⃣ 测试灵感捕获
-```bash
-cd inspiration-workflow-skill/scripts
-python capture.py --content "测试灵感：可以用 AI 自动生成单元测试" --type idea --tags "AI,测试"
-```
-
-### 2️⃣ 测试检索
-```bash
-python search.py --file ~/.workbuddy/memory/inspirations/inspirations.json --all
-```
-
-### 3️⃣ 测试压缩
-```bash
-# 先添加足够多的测试数据（达到阈值）
-for i in {1..50}; do python capture.py --content "测试灵感 $i" --type idea --tags "测试"; done
-
-# 执行压缩
-python compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json
-```
-
-### 4️⃣ 测试工作流跟踪
-```bash
-python workflow.py --action "测试工作流跟踪" --progress 50
-python workflow.py --blocker "测试困难"
-python workflow.py --status
-```
+- [ ] 接入向量数据库（Chroma / FAISS）→ 语义检索
+- [ ] 自动生成 Mermaid 知识图谱（可视化任务知识关联）
+- [ ] 接入腾讯文档，导出即发布
+- [ ] feedly MCP 集成，订阅文章自动归类到任务
+- [ ] 多用户隔离（团队协作场景）
 
 ---
 
-## 🚀 未来优化方向
+## 🏆 BOX AI 创想大赛
 
-1. **接入向量数据库**（Chroma / FAISS）→ 语义检索更精准
-2. **支持 Device Code 流鉴权**（无头环境）
-3. **多用户隔离**（团队协作）
-4. **自动生成 Mermaid 图谱**（可视化灵感关联）
-5. **接入腾讯文档**（直接导出到腾讯文档）
-6. **AI 自动生成综述**（调用 LLM API 生成高质量综述）
+本项目参加 BOX AI 创想大赛。详细参赛说明见 [CONTEST.md](CONTEST.md)。
 
 ---
 
@@ -279,10 +256,6 @@ MIT License — 可自由使用、修改、分发。
 
 ## 👤 作者
 
-Shayla Deng @ Tencent
+Shayla Deng @ Tencent PCG
 
----
-
-## 📬 反馈
-
-如有问题或建议，请提交 [Issue](https://github.com/Yanyeoo/inspiration-workflow-skill/issues) 或 Pull Request。
+如有问题或建议，欢迎提 [Issue](https://github.com/Yanyeoo/inspiration-workflow-skill/issues) 或 PR。
