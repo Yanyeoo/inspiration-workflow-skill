@@ -2,6 +2,11 @@
 
 > 自动捕获对话中的灵感/论文/链接，分类存储，超过阈值自动压缩，并随时输出记忆系统或总结。同时跟踪工作流状态（做了什么、进度、困难、AI 推荐下一步）。
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub: Yanyeoo/inspiration-workflow-skill](https://img.shields.io/badge/GitHub-Yanyeoo-green?logo=github)](https://github.com/Yanyeoo/inspiration-workflow-skill)
+
+---
+
 ## ✨ 核心功能
 
 ### 🧠 灵感库（知识存储）
@@ -12,9 +17,9 @@
 - **阈值压缩**：灵感数 ≥ 阈值（默认 50 条）自动生成综述文档
 
 ### 📊 工作流状态跟踪（思路保持）
-- **记录做了什么**：用户说「我做了…」→ 自动记录到工作流
+- **记录做了什么**：用户说「我做了…」→ 记录 `action`
 - **跟踪进度**：0–100% 进度管理
-- **记录困难**：用户说「卡住了」→ 记录困难 + AI 推荐下一步
+- **记录困难**：用户说「卡住了」→ 记录 `blocker` + AI 推荐 `next_steps`
 - **推荐下一步**：AI 基于当前状态推荐下一步行动
 
 ### 📤 导出功能
@@ -29,7 +34,8 @@
 
 ```
 inspiration-workflow-skill/
-├── SKILL.md              # Skill 定义文件（AI 行为规则）
+├── SKILL.md              # WorkBuddy Skill 定义文件（AI 行为规则）
+├── CLAUDE.md            # Claude Code CLI 兼容版本（无 frontmatter）
 ├── scripts/
 │   ├── capture.py        # 灵感捕获模块
 │   ├── compress.py       # 自动压缩模块
@@ -41,20 +47,52 @@ inspiration-workflow-skill/
 
 ---
 
-## 🛠️ 安装与使用
+## 🛠️ 安装
 
-### 依赖
-- Python 3.8+
-- 无额外依赖（仅使用标准库）
+### 方式一：WorkBuddy（推荐）
 
-### 快速开始
+```bash
+# 克隆仓库
+git clone https://github.com/Yanyeoo/inspiration-workflow-skill.git ~/.workbuddy/skills/inspiration-workflow-skill
 
-#### 1️⃣ 捕获灵感
+# 或手动复制
+cp SKILL.md ~/.workbuddy/skills/inspiration-workflow-skill/SKILL.md
+```
+
+安装后重启 WorkBuddy，Skill 自动生效。直接对话即可触发。
+
+---
+
+### 方式二：Claude Code CLI
+
+```bash
+# 克隆仓库
+git clone https://github.com/Yanyeoo/inspiration-workflow-skill.git
+cd inspiration-workflow-skill
+
+# 安装到 Claude Code CLI commands 目录
+mkdir -p ~/.claude/commands
+cp CLAUDE.md ~/.claude/commands/inspiration-workflow.md
+```
+
+安装后，在 Claude Code CLI 中用 `/inspiration-workflow` 调用。
+
+---
+
+## 🚀 快速开始
+
+### 1️⃣ 捕获灵感
 ```bash
 python scripts/capture.py --content "我想到一个点子，可以用 AI 自动生成单元测试" --type idea --tags "AI,测试,自动化"
 ```
 
-#### 2️⃣ 检索灵感
+或直接对话（WorkBuddy Skill 自动触发）：
+> 用户：「我想到一个点子，可以用 AI 做代码审查」\
+> AI：「✅ 识别到灵感：AI 代码审查。要记录到灵感库吗？（Y/n）」
+
+---
+
+### 2️⃣ 检索灵感
 ```bash
 # 按关键词搜索
 python scripts/search.py --file ~/.workbuddy/memory/inspirations/inspirations.json --keyword "RAG"
@@ -66,19 +104,9 @@ python scripts/search.py --file ~/.workbuddy/memory/inspirations/inspirations.js
 python scripts/search.py --file ~/.workbuddy/memory/inspirations/inspirations.json --all
 ```
 
-#### 3️⃣ 自动压缩
-```bash
-# 设置压缩阈值（默认 50 条）
-python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json --threshold 30
+---
 
-# 执行压缩（达到阈值后自动触发）
-python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json
-
-# 仅检测不执行
-python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json --dry-run
-```
-
-#### 4️⃣ 工作流状态跟踪
+### 3️⃣ 工作流状态跟踪
 ```bash
 # 记录做了什么
 python scripts/workflow.py --action "完成灵感库 SKILL.md 编写" --progress 30
@@ -90,10 +118,26 @@ python scripts/workflow.py --progress 60
 python scripts/workflow.py --blocker "tai-skill 鉴权脚本有 bug"
 
 # 查看当前状态
-python scripts/workflow.py --status --file ~/.workbuddy/memory/inspirations/workflow-state.json
+python scripts/workflow.py --status
 ```
 
-#### 5️⃣ 导出
+---
+
+### 4️⃣ 自动压缩
+```bash
+# 设置压缩阈值（默认 50 条）
+python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json --threshold 30
+
+# 执行压缩（达到阈值后自动触发）
+python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json
+
+# 仅检测不执行
+python scripts/compress.py --file ~/.workbuddy/memory/inspirations/inspirations.json --dry-run
+```
+
+---
+
+### 5️⃣ 导出
 ```bash
 # 导出为 Markdown（适配 KM / 腾讯学堂）
 python scripts/export.py --file ~/.workbuddy/memory/inspirations/inspirations.json --format markdown --output exports/inspirations.md
@@ -110,9 +154,7 @@ python scripts/export.py --workflow --output exports/workflow-report.md
 
 ---
 
-## 📋 SKILL.md 触发词
-
-AI 会基于 `SKILL.md` 自动识别并触发，无需手动调用脚本：
+## 📋 SKILL.md 触发词（WorkBuddy）
 
 | 场景 | 触发词示例 | AI 动作 |
 |---|---|---|
@@ -146,12 +188,12 @@ AI 会基于 `SKILL.md` 自动识别并触发，无需手动调用脚本：
   "version": "1.0",
   "entries": [
     {
-      "id": "insp_20260609_001",
+      "id": "insp_20260609_001_123456",
       "title": "RAG 优化论文",
       "content": "刚才看到一篇关于 RAG 优化的论文...",
       "type": "paper",
       "tags": ["RAG", "知识库", "优化"],
-      "related": ["insp_20260607_001"],
+      "related": ["insp_20260607_001_789012"],
       "created_at": "2026-06-09T12:30:00+08:00",
       "status": "active",
       "source_url": "https://arxiv.org/..."
@@ -165,31 +207,11 @@ AI 会基于 `SKILL.md` 自动识别并触发，无需手动调用脚本：
 }
 ```
 
-### workflow-state.json Schema
-```json
-{
-  "version": "1.0",
-  "current_task": "开发灵感库 Skill",
-  "progress": 30,
-  "history": [
-    {
-      "timestamp": "2026-06-09T11:30:00+08:00",
-      "action": "完成 SKILL.md 架构设计",
-      "progress": 20,
-      "blockers": [],
-      "next_steps": ["编写 SKILL.md 文件"]
-    }
-  ],
-  "blockers": [],
-  "next_steps": ["完成 SKILL.md 编写", "实现 MVP 脚本"]
-}
-```
-
 ---
 
 ## ⚙️ 配置项
 
-用户可通过对话修改配置（AI 会识别并执行）：
+用户可通过对话修改配置：
 
 | 配置项 | 默认值 | 说明 |
 |---|---|---|
@@ -251,7 +273,7 @@ python workflow.py --status
 
 ## 📄 许可证
 
-MIT License
+MIT License — 可自由使用、修改、分发。
 
 ---
 
@@ -263,4 +285,4 @@ Shayla Deng @ Tencent
 
 ## 📬 反馈
 
-如有问题或建议，请提交 Issue 或 Pull Request。
+如有问题或建议，请提交 [Issue](https://github.com/Yanyeoo/inspiration-workflow-skill/issues) 或 Pull Request。
