@@ -237,10 +237,28 @@ python ~/.workbuddy/skills/inspiration-workflow-skill/scripts/capture.py \
 
 ---
 
+## 🆚 与 NotebookLM 对比
+
+| 功能 | NotebookLM | 知识秘书 Agent |
+|---|---|---|
+| 思维导图 | 静态图 | **交互式 HTML**（可点击查看详情）|
+| 闪卡 | 自动生成 | 自动生成 Q&A，支持 Obsidian 导入 |
+| 报告 | 基础报告 | **含任务进度条 + 时间线 + 知识库摘要** |
+| 数据表格 | 支持 | 含分类统计 + 全条目表格 |
+| 任务绑定 | 无任务概念 | **每条知识绑定 task_id** |
+| 工作流追踪 | 不支持 | 进度/blocker/时间线全覆盖 |
+| 跨平台 | 仅网页 | Box/Claude/CodeBuddy/Codex/小龙虾 |
+| 数据隐私 | 云端存储 | **本地 JSON，数据不离机** |
+
+> 核心差异：NotebookLM 是「读文档生内容」，知识秘书是「边工作边积累 + 知识驱动决策」。
+
+---
+
 ## 🔮 未来规划
 
 - [ ] 接入向量数据库（Chroma/FAISS），实现语义检索
+- [ ] 音频摘要导出（对标 NotebookLM Audio Overview）
 - [ ] 与腾讯文档直接对接，导出即发布
 - [ ] 多用户隔离，支持团队协作场景
-- [ ] 自动生成 Mermaid 知识图谱，可视化任务知识关联
+- [ ] 自动生成更丰富的 Mermaid 知识图谱
 - [ ] 接入 feedly MCP，自动把订阅文章归类到相关任务
