@@ -49,7 +49,8 @@
 use_skill("https://github.com/Yanyeoo/inspiration-workflow-skill")
 ```
 
-其他平台见 [DEPLOY.md](DEPLOY.md)。
+安装后**什么都不用做**——正常说话，知识秘书自动在场。  
+其他平台 + 定时推送 + 企微接入见 [DAILY_WORKFLOW.md](DAILY_WORKFLOW.md)。
 
 ---
 
